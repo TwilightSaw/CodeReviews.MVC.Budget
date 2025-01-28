@@ -32,5 +32,6 @@ public class Repository<T>(DbContext context) : IRepository<T> where T : class
     public void Add(T entity)
     {
         context.Add(entity);
+        context.SaveChanges();
     }
 }

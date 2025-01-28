@@ -6,6 +6,6 @@ public class Transaction
     public string Name { get; set; }
     public DateTime DateTime { get; set; }
     public decimal Finance { get; set; }
-    public Category Category { get; set; }
+    public virtual Category Category { get; set; }
     public int CategoryId { get; set; }
 }
