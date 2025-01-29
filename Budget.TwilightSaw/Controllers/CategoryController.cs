@@ -34,7 +34,10 @@ namespace Budget.TwilightSaw.Controllers
             var category = service.GetCategory(id);
             if (category == null) return NotFound();
 
-            service.UpdateCategory(updatedCategory);
+            category.Name = updatedCategory.Name;
+           
+
+            service.UpdateCategory(category);
             return NoContent();
         }
 

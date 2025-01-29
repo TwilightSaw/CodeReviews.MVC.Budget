@@ -31,10 +31,15 @@ public class TransactionController(TransactionService service) : ControllerBase
     [HttpPut("{id}")]
     public IActionResult UpdateTransaction(int id, [FromBody] Transaction updatedTransaction)
     {
-        var category = service.GetTransaction(id);
-        if (category == null) return NotFound();
+        var transaction = service.GetTransaction(id);
+        if (transaction == null) return NotFound();
 
-        service.UpdateTransaction(updatedTransaction);
+        transaction.Name = updatedTransaction.Name;
+        transaction.DateTime = updatedTransaction.DateTime;
+        transaction.Finance = updatedTransaction.Finance;
+        transaction.CategoryId = updatedTransaction.CategoryId;
+
+        service.UpdateTransaction(transaction);
         return NoContent();
     }
 

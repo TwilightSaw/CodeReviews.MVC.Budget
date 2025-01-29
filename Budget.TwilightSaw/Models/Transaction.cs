@@ -1,4 +1,6 @@
-﻿namespace Budget.TwilightSaw.Models;
+﻿using Newtonsoft.Json;
+
+namespace Budget.TwilightSaw.Models;
 
 public class Transaction
 {
@@ -6,6 +8,8 @@ public class Transaction
     public string Name { get; set; }
     public DateTime DateTime { get; set; }
     public decimal Finance { get; set; }
-    public virtual Category Category { get; set; }
+
+    [JsonIgnore]
+    public virtual Category? Category { get; set; }
     public int CategoryId { get; set; }
 }
