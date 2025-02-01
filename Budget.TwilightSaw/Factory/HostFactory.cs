@@ -19,7 +19,10 @@ public class HostFactory
             .LogTo(Console.WriteLine, LogLevel.None)
             .UseLazyLoadingProxies());
 
-        services.AddControllersWithViews();
+        services.AddControllersWithViews().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        }); ;
         services.AddRouting();
         services.AddControllers();
         services.AddEndpointsApiExplorer();

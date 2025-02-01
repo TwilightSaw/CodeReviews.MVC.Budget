@@ -38,7 +38,7 @@ namespace Budget.TwilightSaw.Controllers
            
 
             service.UpdateCategory(category);
-            return NoContent();
+            return Ok(category);
         }
 
         [HttpDelete("{id}")]
