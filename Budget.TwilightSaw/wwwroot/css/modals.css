@@ -1,0 +1,35 @@
+﻿.popover {
+    position: absolute;
+    width: 220px;
+    background: white;
+    padding: 10px;
+    border-radius: 3px;
+    font-family: 'Poiret One', sans-serif;
+    z-index: 1000;
+    transform-origin: top left; 
+    transition: transform 0.4s ease-out, opacity 0.3s ease-out, top 0.4s ease-out, left 0.4s ease-out;
+}
+
+.popover-arrow {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: white;
+    transform: rotate(-45deg);
+    top: 6px;
+    left: -5px; 
+}
+
+.popover-hidden {
+    transform: rotate(-45deg) translateY(-20px) translateX(-20px) scale(0.5);
+    opacity: 0;
+}
+
+.popover-visible {
+    transform: rotate(0) translateY(0) translateX(0) scale(1);
+    opacity: 1;
+}
+
+#fname {
+    font-family: 'Poiret One', sans-serif;
+}

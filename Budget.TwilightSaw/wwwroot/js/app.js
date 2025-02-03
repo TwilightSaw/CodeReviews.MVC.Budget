@@ -1,6 +1,8 @@
 var _a;
 let categories = [];
 window.onload = fetchCategories;
+fetchDatas();
+fetchTransactions();
 async function fetchCategories() {
     const response = await fetch("/api/category");
     const category = await response.json();
@@ -113,7 +115,7 @@ function closePopover(event) {
     const target = event.target;
     if (target.classList.contains("block")) {
         const backgroundColor = getComputedStyle(target).backgroundColor;
-        const category = categories.find(c => c.name === target.textContent);
+        const category = categories.find((c) => c.name === target.textContent);
         if (category) {
             createPopover(backgroundColor, target, category);
         }
@@ -123,5 +125,80 @@ function closePopover(event) {
         event.stopPropagation();
     }
 });
+async function fetchTransactions() {
+    const response = await fetch("/api/transaction");
+    const transactions = await response.json();
+    const responseCategory = await fetch("/api/category");
+    const category = await responseCategory.json();
+    const dataElement = document.getElementById("transactions");
+    if (!dataElement)
+        return;
+    const childElements = dataElement.querySelectorAll(".transaction-line");
+    // 🔹 Перебираємо всі блоки з датами (childElements)
+    childElements.forEach((element) => {
+        var _a;
+        const blockDate = (_a = element.textContent) === null || _a === void 0 ? void 0 : _a.trim(); // Отримуємо текст дати
+        console.log("Checking block:", blockDate);
+        transactions.forEach((transaction) => {
+            const transactionDate = new Date(transaction.dateTime)
+                .toLocaleString("en-EN", {
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+            })
+                .trim(); // Форматуємо дату транзакції
+            console.log(`Comparing: ${transactionDate} with block: ${blockDate}`);
+            if (blockDate === transactionDate) {
+                console.log("✅ Match found! Adding transaction:", transaction.name);
+                const data = category.find((c) => c.id === transaction.categoryId);
+                // 🔹 Створюємо новий елемент для транзакції
+                const transactionItem = document.createElement("div");
+                transactionItem.classList.add("transaction-list");
+                const transactionDetails = document.createElement("div");
+                transactionDetails.classList.add("transaction-line");
+                transactionDetails.textContent = `${transaction.name}   ${data === null || data === void 0 ? void 0 : data.name}`; // Додаємо назву транзакції
+                transactionItem.appendChild(transactionDetails);
+                element.appendChild(transactionItem); // Додаємо в знайдений блок
+            }
+        });
+    });
+}
+async function fetchDatas() {
+    const response = await fetch("/api/transaction");
+    const transaction = await response.json();
+    const datas = [];
+    transaction.forEach((transactions) => {
+        const date = new Date(transactions.dateTime);
+        const stringDate = date.toLocaleString("en-EN", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        });
+        if (!datas.includes(stringDate)) {
+            datas.push(stringDate);
+        }
+    });
+    console.log("Datas after processing:", datas);
+    const list = document.getElementById("transactions");
+    console.log(list);
+    if (!list) {
+        console.error("Element with ID 'header' not found");
+        return;
+    }
+    if (list) {
+        list.innerHTML = "";
+        datas.forEach((datas) => {
+            const listItem = document.createElement("div");
+            listItem.setAttribute("id", "transaction-line");
+            listItem.classList.add("transaction-line");
+            const listData = document.createElement("div");
+            listData.setAttribute("id", "transaction-data");
+            listData.classList.add("transaction-data");
+            listData.textContent = datas;
+            listItem.appendChild(listData);
+            list.appendChild(listItem);
+        });
+    }
+}
 export {};
 //# sourceMappingURL=app.js.map
