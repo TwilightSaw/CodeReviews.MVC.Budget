@@ -118,10 +118,15 @@ body {
     padding: 5px;
 }
 
+.price {
+    margin-left: auto;
+    justify-content: end;
+}
+
 .transaction-list {
     height: 50px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: stretch;
 }
 

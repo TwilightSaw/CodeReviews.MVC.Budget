@@ -51,7 +51,7 @@ function createPopover(color, button, content) {
       <div class="popover-arrow"></div>
       <div class="popover-content">
         <form id="popup-form">
-          <input type="text" id="fname" name="fname" placeholder="${content === null || content === void 0 ? void 0 : content.name}" required>
+          <input type="text" id="fname" name="fname" placeholder="${content ? content.name : "Add category"}" required>
           <button type="submit">></button>
         </form>
       </div>
@@ -99,7 +99,7 @@ function createPopover(color, button, content) {
                     fetchCategories();
                 }
                 else {
-                    const response = await fetch(`/api/category}`, {
+                    const response = await fetch(`/api/category`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -133,7 +133,8 @@ function closePopover(event, button) {
 }
 (_a = document.getElementById("header")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", (event) => {
     const target = event.target;
-    if (target.classList.contains("block") || target.classList.contains("block-add")) {
+    if (target.classList.contains("block") ||
+        target.classList.contains("block-add")) {
         const backgroundColor = getComputedStyle(target).backgroundColor;
         let category = null;
         if (target.classList.contains("block")) {
@@ -174,10 +175,14 @@ async function fetchTransactions() {
                 const data = category.find((c) => c.id === transaction.categoryId);
                 const transactionItem = document.createElement("div");
                 transactionItem.classList.add("transaction-list");
-                const transactionDetails = document.createElement("div");
-                transactionDetails.classList.add("transaction-line");
-                transactionDetails.textContent = `${transaction.name}   ${data === null || data === void 0 ? void 0 : data.name}`;
-                transactionItem.appendChild(transactionDetails);
+                const transactionName = document.createElement("div");
+                transactionName.classList.add("transaction-line");
+                transactionName.textContent = `${transaction.name}`;
+                const transactionPrice = document.createElement("div");
+                transactionPrice.classList.add("transaction-line", "price");
+                transactionPrice.textContent = `${transaction.finance}`;
+                transactionItem.appendChild(transactionName);
+                transactionItem.appendChild(transactionPrice);
                 element.appendChild(transactionItem);
             }
         });
