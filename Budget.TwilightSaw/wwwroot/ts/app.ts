@@ -45,7 +45,11 @@ function getRandomColor(): string {
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
-function createPopover(color: string, button: HTMLElement, content: Category) {
+function createPopover(
+    color: string,
+    button: HTMLButtonElement,
+    content: Category | null
+) {
     const existingPopover = document.getElementById("popover");
     if (existingPopover) {
         existingPopover.remove();
@@ -59,8 +63,8 @@ function createPopover(color: string, button: HTMLElement, content: Category) {
       <div class="popover-arrow"></div>
       <div class="popover-content">
         <form id="popup-form">
-          <input type="text" id="fname" name="fname" placeholder="${content.name}" required>
-          <button type="submit">Submit</button>
+          <input type="text" id="fname" name="fname" placeholder="${content?.name}" required>
+          <button type="submit">></button>
         </form>
       </div>
     `;
@@ -73,22 +77,23 @@ function createPopover(color: string, button: HTMLElement, content: Category) {
     }
 
     const rect = button.getBoundingClientRect();
-    const offsetX = 5; 
-    const offsetY = 10; 
+    const offsetX = 5;
+    const offsetY = 10;
 
-    popover.style.top = `${rect.top + window.scrollY - 50}px`; 
+    popover.style.top = `${rect.top + window.scrollY - 50}px`;
     popover.style.left = `${rect.left + window.scrollX - 10}px`;
 
     setTimeout(() => {
         popover.classList.remove("popover-hidden");
         popover.classList.add("popover-visible");
+        button.classList.add("inactive");
 
         popover.style.top = `${rect.top + window.scrollY + offsetY}px`;
         popover.style.left = `${rect.right + window.scrollX + offsetX}px`;
     }, 10);
 
     setTimeout(() => {
-        document.addEventListener("click", closePopover);
+        document.addEventListener("click", (e) => closePopover(e, button));
         const form = document.getElementById("popup-form") as HTMLFormElement;
 
         form?.addEventListener("submit", async (event) => {
@@ -98,22 +103,44 @@ function createPopover(color: string, button: HTMLElement, content: Category) {
             const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await fetch(`/api/category/${content.id}`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ Name: data.fname }),
-                });
+                if (button.classList.contains("block")) {
+                    const response = await fetch(
+                        `/api/category/${content?.id}`,
+                        {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ Name: data.fname }),
+                        }
+                    );
 
-                if (!response.ok) throw new Error("Failed to submit form");
+                    if (!response.ok) throw new Error("Failed to submit form");
 
-                const result = await response.json();
+                    const result = await response.json();
 
-                popover.classList.remove("popover-visible");
-                popover.classList.add("popover-hidden");
-                setTimeout(() => popover.remove(), 300); 
-                fetchCategories();
+                    popover.classList.remove("popover-visible");
+                    popover.classList.add("popover-hidden");
+                    setTimeout(() => popover.remove(), 300);
+                    fetchCategories();
+                } else {
+                    const response = await fetch(`/api/category}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ Name: data.fname }),
+                    });
+
+                    if (!response.ok) throw new Error("Failed to submit form");
+
+                    const result = await response.json();
+
+                    popover.classList.remove("popover-visible");
+                    popover.classList.add("popover-hidden");
+                    setTimeout(() => popover.remove(), 300);
+                    fetchCategories();
+                }
             } catch (error) {
                 console.error("Error submitting form:", error);
             }
@@ -121,25 +148,33 @@ function createPopover(color: string, button: HTMLElement, content: Category) {
     }, 10);
 }
 
-function closePopover(event: MouseEvent) {
+function closePopover(event: MouseEvent, button: HTMLButtonElement) {
     const popover = document.getElementById("popover");
     if (popover && !popover.contains(event.target as Node)) {
-        popover.remove();
-        document.removeEventListener("click", closePopover);
+        popover.classList.remove("popover-visible");
+        popover.classList.add("popover-hidden");
+        button.classList.remove("inactive");
+        setTimeout(() => popover.remove(), 300);
+        document.removeEventListener("click", (e) => closePopover(e, button));
     }
 }
 
 document.getElementById("header")?.addEventListener("click", (event) => {
-    const target = event.target as HTMLElement;
-    if (target.classList.contains("block")) {
-        const backgroundColor = getComputedStyle(target).backgroundColor;
-        const category = categories.find((c) => c.name === target.textContent);
+    const target = event.target as HTMLButtonElement;
 
-        if (category) {
-            createPopover(backgroundColor, target, category);
-        } else {
-            console.error("Category not found for:", target.textContent);
+    if (target.classList.contains("block") || target.classList.contains("block-add")) {
+        const backgroundColor = getComputedStyle(target).backgroundColor;
+        let category = null;
+
+        if (target.classList.contains("block")) {
+            category = categories.find((c) => c.name === target.textContent);
+            if (!category) {
+                console.error("Category not found for:", target.textContent);
+                return; 
+            }
         }
+
+        createPopover(backgroundColor, target, category);
         event.stopPropagation();
     }
 });
@@ -157,7 +192,7 @@ async function fetchTransactions(): Promise<void> {
     const childElements = dataElement.querySelectorAll(".transaction-line");
 
     childElements.forEach((element) => {
-        const blockDate = element.textContent?.trim(); 
+        const blockDate = element.textContent?.trim();
         console.log("Checking block:", blockDate);
 
         transactions.forEach((transaction) => {
@@ -165,9 +200,9 @@ async function fetchTransactions(): Promise<void> {
                 .toLocaleString("en-EN", {
                     year: "numeric",
                     month: "long",
-                    day: "numeric"  
+                    day: "numeric",
                 })
-                .trim(); 
+                .trim();
 
             console.log(
                 `Comparing: ${transactionDate} with block: ${blockDate}`
@@ -183,16 +218,15 @@ async function fetchTransactions(): Promise<void> {
                     (c) => c.id === transaction.categoryId
                 );
 
-                
                 const transactionItem = document.createElement("div");
                 transactionItem.classList.add("transaction-list");
 
                 const transactionDetails = document.createElement("div");
                 transactionDetails.classList.add("transaction-line");
-                transactionDetails.textContent = `${transaction.name}   ${data?.name}`; 
+                transactionDetails.textContent = `${transaction.name}   ${data?.name}`;
 
                 transactionItem.appendChild(transactionDetails);
-                element.appendChild(transactionItem); 
+                element.appendChild(transactionItem);
             }
         });
     });
@@ -207,7 +241,7 @@ async function fetchDatas(): Promise<void> {
         const stringDate = date.toLocaleString("en-EN", {
             year: "numeric",
             month: "long",
-            day: "numeric", 
+            day: "numeric",
         });
         if (!datas.includes(stringDate)) {
             datas.push(stringDate);

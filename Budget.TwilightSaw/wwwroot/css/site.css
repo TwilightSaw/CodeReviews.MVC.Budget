@@ -64,6 +64,15 @@ body {
     font-weight: bolder;
     cursor: pointer;
     font-family: 'Poiret One', sans-serif;
+    transition: transform 0.4s ease-out, opacity 0.3s ease-out
+}
+
+
+
+.inactive {
+    opacity: 0.5;
+    pointer-events: none;
+    transition: transform 0.4s ease-out, opacity 0.3s ease-out
 }
 
 .categories {
@@ -85,7 +94,10 @@ body {
     justify-content: center;
     line-height: normal;
     font-size: 12px;
+    font-family: 'Poiret One', sans-serif;
     font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.4s ease-out, opacity 0.3s ease-out
 }
 
 

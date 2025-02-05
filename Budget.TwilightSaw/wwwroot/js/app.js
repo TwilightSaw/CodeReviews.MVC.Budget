@@ -51,8 +51,8 @@ function createPopover(color, button, content) {
       <div class="popover-arrow"></div>
       <div class="popover-content">
         <form id="popup-form">
-          <input type="text" id="fname" name="fname" placeholder="${content.name}" required>
-          <button type="submit">Submit</button>
+          <input type="text" id="fname" name="fname" placeholder="${content === null || content === void 0 ? void 0 : content.name}" required>
+          <button type="submit">></button>
         </form>
       </div>
     `;
@@ -63,40 +63,57 @@ function createPopover(color, button, content) {
         arrow.style.backgroundColor = color;
     }
     const rect = button.getBoundingClientRect();
-    const offsetX = 5; // Відступ між кнопкою і popover по горизонталі
-    const offsetY = 10; // Відступ між кнопкою і popover по вертикалі
-    // Встановлюємо початкову позицію
-    popover.style.top = `${rect.top + window.scrollY - 50}px`; // Починаємо над кнопкою
+    const offsetX = 5;
+    const offsetY = 10;
+    popover.style.top = `${rect.top + window.scrollY - 50}px`;
     popover.style.left = `${rect.left + window.scrollX - 10}px`;
-    // Невеликий таймаут, щоб анімація спрацювала після додавання в DOM
     setTimeout(() => {
         popover.classList.remove("popover-hidden");
         popover.classList.add("popover-visible");
+        button.classList.add("inactive");
         popover.style.top = `${rect.top + window.scrollY + offsetY}px`;
         popover.style.left = `${rect.right + window.scrollX + offsetX}px`;
     }, 10);
     setTimeout(() => {
-        document.addEventListener("click", closePopover);
+        document.addEventListener("click", (e) => closePopover(e, button));
         const form = document.getElementById("popup-form");
         form === null || form === void 0 ? void 0 : form.addEventListener("submit", async (event) => {
             event.preventDefault();
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
             try {
-                const response = await fetch(`/api/category/${content.id}`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ Name: data.fname }),
-                });
-                if (!response.ok)
-                    throw new Error("Failed to submit form");
-                const result = await response.json();
-                popover.classList.remove("popover-visible");
-                popover.classList.add("popover-hidden");
-                setTimeout(() => popover.remove(), 300); //
-                fetchCategories();
+                if (button.classList.contains("block")) {
+                    const response = await fetch(`/api/category/${content === null || content === void 0 ? void 0 : content.id}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ Name: data.fname }),
+                    });
+                    if (!response.ok)
+                        throw new Error("Failed to submit form");
+                    const result = await response.json();
+                    popover.classList.remove("popover-visible");
+                    popover.classList.add("popover-hidden");
+                    setTimeout(() => popover.remove(), 300);
+                    fetchCategories();
+                }
+                else {
+                    const response = await fetch(`/api/category}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ Name: data.fname }),
+                    });
+                    if (!response.ok)
+                        throw new Error("Failed to submit form");
+                    const result = await response.json();
+                    popover.classList.remove("popover-visible");
+                    popover.classList.add("popover-hidden");
+                    setTimeout(() => popover.remove(), 300);
+                    fetchCategories();
+                }
             }
             catch (error) {
                 console.error("Error submitting form:", error);
@@ -104,24 +121,29 @@ function createPopover(color, button, content) {
         });
     }, 10);
 }
-function closePopover(event) {
+function closePopover(event, button) {
     const popover = document.getElementById("popover");
     if (popover && !popover.contains(event.target)) {
-        popover.remove();
-        document.removeEventListener("click", closePopover);
+        popover.classList.remove("popover-visible");
+        popover.classList.add("popover-hidden");
+        button.classList.remove("inactive");
+        setTimeout(() => popover.remove(), 300);
+        document.removeEventListener("click", (e) => closePopover(e, button));
     }
 }
 (_a = document.getElementById("header")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", (event) => {
     const target = event.target;
-    if (target.classList.contains("block")) {
+    if (target.classList.contains("block") || target.classList.contains("block-add")) {
         const backgroundColor = getComputedStyle(target).backgroundColor;
-        const category = categories.find((c) => c.name === target.textContent);
-        if (category) {
-            createPopover(backgroundColor, target, category);
+        let category = null;
+        if (target.classList.contains("block")) {
+            category = categories.find((c) => c.name === target.textContent);
+            if (!category) {
+                console.error("Category not found for:", target.textContent);
+                return;
+            }
         }
-        else {
-            console.error("Category not found for:", target.textContent);
-        }
+        createPopover(backgroundColor, target, category);
         event.stopPropagation();
     }
 });
@@ -134,31 +156,29 @@ async function fetchTransactions() {
     if (!dataElement)
         return;
     const childElements = dataElement.querySelectorAll(".transaction-line");
-    // 🔹 Перебираємо всі блоки з датами (childElements)
     childElements.forEach((element) => {
         var _a;
-        const blockDate = (_a = element.textContent) === null || _a === void 0 ? void 0 : _a.trim(); // Отримуємо текст дати
+        const blockDate = (_a = element.textContent) === null || _a === void 0 ? void 0 : _a.trim();
         console.log("Checking block:", blockDate);
         transactions.forEach((transaction) => {
             const transactionDate = new Date(transaction.dateTime)
                 .toLocaleString("en-EN", {
                 year: "numeric",
                 month: "long",
-                day: "numeric"
+                day: "numeric",
             })
-                .trim(); // Форматуємо дату транзакції
+                .trim();
             console.log(`Comparing: ${transactionDate} with block: ${blockDate}`);
             if (blockDate === transactionDate) {
                 console.log("✅ Match found! Adding transaction:", transaction.name);
                 const data = category.find((c) => c.id === transaction.categoryId);
-                // 🔹 Створюємо новий елемент для транзакції
                 const transactionItem = document.createElement("div");
                 transactionItem.classList.add("transaction-list");
                 const transactionDetails = document.createElement("div");
                 transactionDetails.classList.add("transaction-line");
-                transactionDetails.textContent = `${transaction.name}   ${data === null || data === void 0 ? void 0 : data.name}`; // Додаємо назву транзакції
+                transactionDetails.textContent = `${transaction.name}   ${data === null || data === void 0 ? void 0 : data.name}`;
                 transactionItem.appendChild(transactionDetails);
-                element.appendChild(transactionItem); // Додаємо в знайдений блок
+                element.appendChild(transactionItem);
             }
         });
     });

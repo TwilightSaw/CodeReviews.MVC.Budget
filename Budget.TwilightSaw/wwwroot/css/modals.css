@@ -20,6 +20,18 @@
     left: -5px; 
 }
 
+.popover-content {
+    gap: 25px;
+    width: 100%;
+    border: 1px solid #ccc;
+}
+
+#popup-form {
+    box-sizing: border-box;
+    display: flex;
+    
+}
+
 .popover-hidden {
     transform: rotate(-45deg) translateY(-20px) translateX(-20px) scale(0.5);
     opacity: 0;
@@ -32,4 +44,18 @@
 
 #fname {
     font-family: 'Poiret One', sans-serif;
+    border: none;
+    width: 100%;
+    font-size: 12px;
+    font-weight: bolder;
+    text-justify: distribute;
+}
+
+#popup-form > button {
+    font-family: 'Poiret One', sans-serif;
+    background-color: white; 
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-weight: bolder;
 }
