@@ -83,6 +83,31 @@ body {
     gap: 10px;
     padding-left: 10px;
 }
+    .categories > div {
+        position: relative;
+        display: inline-block;
+    }
+
+    .categories > div > :nth-child(2) {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 20px;
+        height: 20px;
+        background: red;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+        .categories > div > :nth-child(2):hover {
+            background: darkred;
+        }
 
 .block-add {
     border-radius: 50%;
@@ -144,3 +169,12 @@ body {
 }
 
 
+
+
+
+
+
+.persona-dialog {
+    width: 300px;
+    height: 100px;
+}

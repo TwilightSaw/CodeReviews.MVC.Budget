@@ -1,13 +1,59 @@
 ﻿.popover {
     position: absolute;
-    width: 220px;
-    background: white;
     padding: 10px;
     border-radius: 3px;
     font-family: 'Poiret One', sans-serif;
     z-index: 1000;
-    transform-origin: top left; 
-    transition: transform 0.4s ease-out, opacity 0.3s ease-out, top 0.4s ease-out, left 0.4s ease-out;
+    transform-origin: top left;
+}
+
+@keyframes personaAppear {
+    0% {
+        transform: scale(0.5) rotate(-10deg);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.05) rotate(2deg);
+        opacity: 1;
+    }
+
+    80% {
+        transform: scale(0.95) rotate(-1deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.persona-appear {
+    animation: personaAppear 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+
+@keyframes personaDisappear {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+
+    60% {
+        transform: scale(0.95) rotate(-1deg);
+    }
+
+    80% {
+        transform: scale(1.05) rotate(2deg);
+    }
+
+    100% {
+        transform: scale(0.5) rotate(-10deg);
+        opacity: 0;
+    }
+}
+
+.persona-disappear {
+    animation: personaDisappear 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 .popover-arrow {
@@ -17,7 +63,7 @@
     background: white;
     transform: rotate(-45deg);
     top: 6px;
-    left: -5px; 
+    left: -5px;
 }
 
 .popover-content {
@@ -29,33 +75,42 @@
 #popup-form {
     box-sizing: border-box;
     display: flex;
-    
-}
-
-.popover-hidden {
-    transform: rotate(-45deg) translateY(-20px) translateX(-20px) scale(0.5);
-    opacity: 0;
-}
-
-.popover-visible {
-    transform: rotate(0) translateY(0) translateX(0) scale(1);
-    opacity: 1;
+    width: 500px;
+    display: flex;
+    align-items: center;
+    padding-left: 70px;
+    padding-bottom: 60px;
+    height: 120px;
+   
 }
 
 #fname {
     font-family: 'Poiret One', sans-serif;
     border: none;
     width: 100%;
-    font-size: 12px;
+    font-size: 29px;
     font-weight: bolder;
-    text-justify: distribute;
+    height: 100%;
+    border-bottom: black solid;
+    background-color: transparent;
+    
 }
+
+#fname:focus {
+    outline: none;
+   
+}
+
 
 #popup-form > button {
     font-family: 'Poiret One', sans-serif;
-    background-color: white; 
+    background-color: transparent;
     border: none;
     cursor: pointer;
     flex-shrink: 0;
     font-weight: bolder;
+    height: 100%;
+    width: 60px;
+    gap: 10px;
 }
+

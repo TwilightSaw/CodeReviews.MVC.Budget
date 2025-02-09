@@ -19,12 +19,17 @@ async function fetchCategories() {
         const listFirstItem = document.createElement("div");
         listFirstItem.classList.add("categories");
         category.forEach((category) => {
+            const listContainer = document.createElement("div");
             const listItem = document.createElement("button");
             listItem.setAttribute("id", "block");
             listItem.style.backgroundColor = getRandomColor();
             listItem.classList.add("block");
             listItem.textContent = (category === null || category === void 0 ? void 0 : category.name) || "Without name";
-            listFirstItem.appendChild(listItem);
+            const listDeleteItem = document.createElement("button");
+            listDeleteItem.textContent = "x";
+            listContainer.appendChild(listItem);
+            listContainer.appendChild(listDeleteItem);
+            listFirstItem.appendChild(listContainer);
             list.appendChild(listFirstItem);
         });
         const listItem = document.createElement("button");
@@ -46,90 +51,162 @@ function createPopover(color, button, content) {
     }
     const popover = document.createElement("div");
     popover.id = "popover";
-    popover.classList.add("popover", "popover-hidden");
-    popover.innerHTML = `
-      <div class="popover-arrow"></div>
-      <div class="popover-content">
-        <form id="popup-form">
-          <input type="text" id="fname" name="fname" placeholder="${content ? content.name : "Add category"}" required>
-          <button type="submit">></button>
-        </form>
-      </div>
-    `;
-    document.body.appendChild(popover);
-    popover.style.backgroundColor = color;
-    const arrow = popover.querySelector(".popover-arrow");
-    if (arrow) {
-        arrow.style.backgroundColor = color;
-    }
+    popover.classList.add("popover");
     const rect = button.getBoundingClientRect();
     const offsetX = 5;
-    const offsetY = 10;
-    popover.style.top = `${rect.top + window.scrollY - 50}px`;
-    popover.style.left = `${rect.left + window.scrollX - 10}px`;
+    const offsetY = 50;
+    popover.style.top = `${rect.top + window.scrollY - offsetY}px`;
+    popover.style.left = `${rect.right + window.scrollX - offsetX}px`;
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("class", "persona-dialog");
+    svg.setAttribute("viewBox", "0 0 500 200");
+    const defs = document.createElementNS(svgNS, "defs");
+    const filter = createSvgElement("filter", {
+        id: "outerStroke",
+        filterUnits: "userSpaceOnUse"
+    });
+    filter.appendChild(createSvgElement("feMorphology", {
+        in: "SourceAlpha",
+        operator: "dilate",
+        radius: "3",
+        result: "dilated"
+    }));
+    filter.appendChild(createSvgElement("feComposite", {
+        in: "dilated",
+        in2: "SourceAlpha",
+        operator: "out",
+        result: "outline"
+    }));
+    filter.appendChild(createSvgElement("feFlood", {
+        "flood-color": "black",
+        result: "floodColor"
+    }));
+    filter.appendChild(createSvgElement("feComposite", {
+        in: "floodColor",
+        in2: "outline",
+        operator: "in",
+        result: "coloredOutline"
+    }));
+    const feMerge = createSvgElement("feMerge");
+    feMerge.appendChild(createSvgElement("feMergeNode", { in: "coloredOutline" }));
+    feMerge.appendChild(createSvgElement("feMergeNode", { in: "SourceGraphic" }));
+    filter.appendChild(feMerge);
+    defs.appendChild(filter);
+    svg.appendChild(defs);
+    const group = createSvgElement("g", {
+        transform: "scale(0.75) translate(10,50)",
+        filter: "url(#outerStroke)"
+    });
+    group.appendChild(createSvgElement("polygon", {
+        points: "50,90 460,20 470,200 50,180",
+        fill: color
+    }));
+    const foreignObject = createSvgElement("foreignObject", {
+        x: "90",
+        y: "110",
+        width: "400",
+        height: "100"
+    });
+    const formContainer = document.createElement("div");
+    formContainer.style.width = "100%";
+    formContainer.style.height = "100%";
+    formContainer.style.display = "flex";
+    formContainer.style.alignItems = "center";
+    formContainer.style.justifyContent = "space-between";
+    formContainer.innerHTML = `
+    <form id="popup-form">
+      <input type="text" id="fname" name="fname"  autocomplete="off" placeholder="${content ? content.name : "Add category"}" required
+            />
+      <button type="submit" >&gt;</button>
+    </form>
+  `;
+    foreignObject.appendChild(formContainer);
+    group.appendChild(foreignObject);
+    group.appendChild(createSvgElement("polygon", {
+        points: "-10,150 60,200 120,150 0,130",
+        fill: color
+    }));
+    group.appendChild(createSvgElement("polygon", {
+        points: "-20,125 -25,170 -3,170 15,134",
+        fill: color
+    }));
+    group.appendChild(createSvgElement("polygon", {
+        points: "-50,160 -7,180 2,160",
+        fill: color
+    }));
+    svg.appendChild(group);
+    popover.appendChild(svg);
+    document.body.appendChild(popover);
+    requestAnimationFrame(() => {
+        popover.classList.add("persona-appear");
+    });
+    button.classList.add("inactive");
+    const onDocumentClick = (e) => {
+        if (!popover.contains(e.target)) {
+            closePopover(button);
+            document.removeEventListener("click", onDocumentClick);
+        }
+    };
     setTimeout(() => {
-        popover.classList.remove("popover-hidden");
-        popover.classList.add("popover-visible");
-        button.classList.add("inactive");
-        popover.style.top = `${rect.top + window.scrollY + offsetY}px`;
-        popover.style.left = `${rect.right + window.scrollX + offsetX}px`;
+        document.addEventListener("click", onDocumentClick);
     }, 10);
-    setTimeout(() => {
-        document.addEventListener("click", (e) => closePopover(e, button));
-        const form = document.getElementById("popup-form");
-        form === null || form === void 0 ? void 0 : form.addEventListener("submit", async (event) => {
-            event.preventDefault();
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-            try {
-                if (button.classList.contains("block")) {
-                    const response = await fetch(`/api/category/${content === null || content === void 0 ? void 0 : content.id}`, {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({ Name: data.fname }),
-                    });
-                    if (!response.ok)
-                        throw new Error("Failed to submit form");
-                    const result = await response.json();
-                    popover.classList.remove("popover-visible");
-                    popover.classList.add("popover-hidden");
-                    setTimeout(() => popover.remove(), 300);
-                    fetchCategories();
-                }
-                else {
-                    const response = await fetch(`/api/category`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({ Name: data.fname }),
-                    });
-                    if (!response.ok)
-                        throw new Error("Failed to submit form");
-                    const result = await response.json();
-                    popover.classList.remove("popover-visible");
-                    popover.classList.add("popover-hidden");
-                    setTimeout(() => popover.remove(), 300);
-                    fetchCategories();
-                }
+    const form = popover.querySelector("#popup-form");
+    form === null || form === void 0 ? void 0 : form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        try {
+            if (button.classList.contains("block")) {
+                const response = await fetch(`/api/category/${content === null || content === void 0 ? void 0 : content.id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ Name: data.fname })
+                });
+                if (!response.ok)
+                    throw new Error("Failed to submit form");
+                await response.json();
+                closePopover(button);
+                fetchCategories();
             }
-            catch (error) {
-                console.error("Error submitting form:", error);
+            else {
+                const response = await fetch(`/api/category`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ Name: data.fname })
+                });
+                if (!response.ok)
+                    throw new Error("Failed to submit form");
+                await response.json();
+                closePopover(button);
+                fetchCategories();
             }
-        });
-    }, 10);
+        }
+        catch (error) {
+            console.error("Error submitting form:", error);
+        }
+    });
 }
-function closePopover(event, button) {
+function closePopover(button) {
     const popover = document.getElementById("popover");
-    if (popover && !popover.contains(event.target)) {
-        popover.classList.remove("popover-visible");
-        popover.classList.add("popover-hidden");
-        button.classList.remove("inactive");
-        setTimeout(() => popover.remove(), 300);
-        document.removeEventListener("click", (e) => closePopover(e, button));
+    if (popover) {
+        popover.classList.remove("persona-appear");
+        popover.classList.add("persona-disappear");
+        setTimeout(() => {
+            popover.remove();
+            button.classList.remove("inactive");
+        }, 200);
     }
+}
+function createSvgElement(elementName, attributes) {
+    const svgNS = "http://www.w3.org/2000/svg";
+    const elem = document.createElementNS(svgNS, elementName);
+    if (attributes) {
+        for (const [attr, value] of Object.entries(attributes)) {
+            elem.setAttribute(attr, value);
+        }
+    }
+    return elem;
 }
 (_a = document.getElementById("header")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", (event) => {
     const target = event.target;
