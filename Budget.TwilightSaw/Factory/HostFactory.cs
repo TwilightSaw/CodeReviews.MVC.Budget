@@ -31,7 +31,18 @@ public class HostFactory
         services.AddScoped<IRepository<Models.Transaction>, Repository<Models.Transaction>>();
         services.AddScoped<CategoryService>();
         services.AddScoped<TransactionService>();
-     
+        
+        services.AddCors(options =>
+        {
+            options.AddPolicy(name: "_myAllowSpecificOrigins",
+                policy =>
+                {
+                    policy.WithOrigins("http://localhost:3000", "https://localhost:3000") // Дозволяємо React
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+        });
+
         return builder.Build();
     }
 }

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Poiret+One&display=swap');
 html {
   font-size: 14px;
 }
@@ -31,23 +32,34 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    
     width: 920px;
     height: 1000px;
+    padding-top: 20px;
+    gap: 10px;
 }
-.header {
+#root {
     display: flex;
-    
-    
-    height: 100px;
     width: 95%;
-    border: solid 1px grey;
+    align-items: center;
+    justify-content: center;
 }
 
-.main > div:nth-of-type(1) {
-    height: 100px;
+.main > div:nth-child(1) {
+    display: flex;
+    min-height: 75px;
+    height: auto;
     width: 95%;
     border: solid 1px grey;
+    justify-content: center;
+}
+
+.main > div:nth-child(2) {
+    
+    min-height: 100px;
+    height: auto;
+    width: 95%;
+    border: solid 1px grey;
+    justify-content: center;
 }
 
 .block {
@@ -80,6 +92,7 @@ body {
     flex-wrap: wrap;
     flex: 1;
     align-items: center;
+  
     gap: 10px;
     padding-left: 10px;
 }
@@ -175,6 +188,6 @@ body {
 
 
 .persona-dialog {
-    width: 300px;
-    height: 100px;
+    width: 500px;
+    height: 150px;
 }
