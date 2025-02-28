@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poiret+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Unkempt&display=swap');
 html {
   font-size: 14px;
 }
@@ -51,9 +52,19 @@ body {
     width: 95%;
     border: solid 1px grey;
     justify-content: center;
+    position: relative;
 }
 
 .main > div:nth-child(2) {
+    display: flex;
+    min-height: 75px;
+    height: auto;
+    width: 95%;
+    border: solid 1px grey;
+    justify-content: center;
+}
+
+.main > div:nth-child(3) {
     
     min-height: 100px;
     height: auto;
@@ -92,7 +103,6 @@ body {
     flex-wrap: wrap;
     flex: 1;
     align-items: center;
-  
     gap: 10px;
     padding-left: 10px;
 }
@@ -153,7 +163,7 @@ body {
 }
 
 .transaction-line {
-    padding: 5px;
+    padding: 10px;
 }
 
 .price {
@@ -172,14 +182,36 @@ body {
     text-align: center;
 }
 
-.transactions-list div:nth-child(1) {
+
+
+
+
+
+
+
+
+.transactionList {
+    display: flex;
+    padding: 10px;
+    width: 100%;
+}
+
+#transaction-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
 
 }
 
+    #transaction-form input, select, button {
+        font-family: 'Poiret One', sans-serif;
+        font-weight: bolder;
+        padding: 10px;
+    }
 
-.transaction-add {
 
-}
+
 
 
 
@@ -191,3 +223,35 @@ body {
     width: 500px;
     height: 150px;
 }
+
+
+
+
+
+
+
+.pointer {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    left: 0;
+    top: 0;
+    font-size: 1.3vw;
+    color: #a33;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    transform: translateX(-130%) translateY(30%) rotate(-20deg);
+    font-family: "Unkempt", cursive;
+
+    
+}
+
+.pointer > #text {
+    width: 10ch;
+}
+
+    .pointer > img {
+        width: 50px;
+        transform: translateX(40%) rotate(45deg);
+    }

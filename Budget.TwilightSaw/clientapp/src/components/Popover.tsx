@@ -91,28 +91,33 @@ const Popover: React.FC<PopoverProps> = ({
                             </form>
                         </div>
                     </foreignObject>
-                    <polygon points="417,57 463,52 466,98 422,103" fill="black" />
-                    <polygon
-                        points="420,60 520,50 520,90 425,100"
-                        fill="#e87c6f"
-                        style={{ cursor: "pointer" }}
-                        onClick={async (e) => {
-                            e.stopPropagation();
-                            await onDelete();
-                        }}
-                    />
-                    <text
-                        x="470"
-                        y="78"
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        fill="black"
-                        fontSize="20"
-                        fontWeight="bold"
-                        pointerEvents="none"
-                    >
-                        Delete
-                    </text>
+
+                    {category?.name && (
+                        <>
+                            <polygon points="417,57 463,52 466,98 422,103" fill="black" />
+                            <polygon
+                                points="420,60 520,50 520,90 425,100"
+                                fill="#e76c6f"
+                                style={{ cursor: "pointer" }}
+                                onClick={async (e) => {
+                                    e.stopPropagation();
+                                    await onDelete();
+                                }}
+                            />
+                            <text
+                                x="470"
+                                y="78"
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                fill="black"
+                                fontSize="20"
+                                fontWeight="bold"
+                                pointerEvents="none"
+                            >
+                                Delete
+                            </text>
+                        </>
+                    )}
                     <polygon points="-10,150 60,200 120,150 0,130" fill={color} />
                     <polygon points="-20,125 -25,170 -3,170 15,134" fill={color} />
                     <polygon points="-50,160 -7,180 2,160" fill={color} />

@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="clientapp\src\modals.css" />
-    <Content Include="clientapp\src\site.css" />
+    <Content Include="clientapp\src\css\modals.css" />
+    <Content Include="clientapp\src\css\site.css" />
   </ItemGroup>
 
   <ItemGroup>

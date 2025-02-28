@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Category, Transaction } from "../../clientapp/src/models/Models";
-import CategoryList from "./components/CategoryList";
-import TransactionList from "./components/TransactionList";
-import Popover from "./components/Popover";
+import { Category, Transaction } from "../models/Models";
+import CategoryList from "./CategoryList";
+import TransactionList from "./TransactionList";
+import Popover from "./Popover";
+
+import SpeechPopover from "./SpeechPopover";
+import AddTransaction from "./AddTransaction";
+import Pointer from "./Pointer";
 
 const App: React.FC = () => {
     const [categories, setCategories] = useState<Category[]>([]);
@@ -22,13 +26,34 @@ const App: React.FC = () => {
         position: { top: 0, left: 0 },
     });
 
-    // Функція для отримання випадкового кольору
-    function getRandomColor(): string {
-        const hue = Math.floor(Math.random() * 360);
-        const saturation = 30;
-        const lightness = 80;
-        return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    const handleNext = () => {
+        console.log('Перехід до наступного діалогу');
     }
+
+    const handleAddTransaction = async (newTransaction: Transaction) => {
+        try {
+            const response = await fetch("https://localhost:7202/api/transaction", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newTransaction),
+            });
+
+            if (!response.ok) {
+                throw new Error("Не вдалося додати транзакцію");
+            }
+
+            const createdTransaction: Transaction = await response.json();
+
+            // Локально оновлюємо список тільки якщо сервер успішно додав запис
+            fetchTransactions();
+
+        } catch (error) {
+            console.error("Помилка під час додавання транзакції:", error);
+        }
+    };
+
 
     // Завантаження категорій
     async function fetchCategories() {
@@ -186,13 +211,18 @@ const App: React.FC = () => {
 
     return (
         <div className="main">
+           
         <div>
             <CategoryList
                 categories={categories}
-                getRandomColor={getRandomColor}
-                onCategoryClick={handleCategoryClick}
-            />
+               
+                    onCategoryClick={handleCategoryClick}
 
+                />
+                <Pointer
+                    text={"Transaction types"}
+                    png={"pointer.PNG"}
+                />
            
 
             {popoverState.visible && (
@@ -206,14 +236,21 @@ const App: React.FC = () => {
                     onDelete={handleDeleteCategory}
                 />
             )}
-        </div>
+            </div>
+            <div>
+
+                <AddTransaction  categories={categories}
+                    onSubmit={handleAddTransaction}></AddTransaction>
+            </div>
         <div>
          <TransactionList
                 groupedTransactions={groupedTransactions}
                 categories={categories}
             />
             </div>
-        </div>
+          
+    </div>
+
     );
 };
 

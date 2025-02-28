@@ -1,6 +1,6 @@
 ﻿export interface Category {
     [x: string]: any;
-    id?: number;
+    id: number;
     name: string;
     transactions?: Transaction[];
 }
