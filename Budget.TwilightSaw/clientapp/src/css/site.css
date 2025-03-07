@@ -172,10 +172,17 @@ body {
 }
 
 .transaction-list {
-    height: 50px;
+    margin-top: 5px;
+    height: 40px;
     display: flex;
     flex-direction: row;
     align-items: stretch;
+
+}
+
+.transaction-list:hover {
+    background-color: lightgray;
+    cursor: pointer;
 }
 
 .transaction-data {

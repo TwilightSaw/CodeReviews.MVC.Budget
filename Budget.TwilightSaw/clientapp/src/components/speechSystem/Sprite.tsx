@@ -1,5 +1,5 @@
 ﻿import React, { useRef, useEffect, useState } from "react";
-import Popover from "./Popover";
+import Popover from "../popovers/Popover";
 import SpeechBubble from "./SpeechPopover";
 
 type Sprite = {

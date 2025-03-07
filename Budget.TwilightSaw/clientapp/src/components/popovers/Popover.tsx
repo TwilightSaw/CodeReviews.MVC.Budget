@@ -1,5 +1,5 @@
 ﻿import React, { useState } from "react";
-import { Category } from "../models/Models";
+import { Category } from "../../models/Models";
 
 type PopoverProps = {
     color: string;

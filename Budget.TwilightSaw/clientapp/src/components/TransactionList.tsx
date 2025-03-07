@@ -4,6 +4,10 @@ import { Category, Transaction } from "../models/Models";
 type TransactionListProps = {
     groupedTransactions: { [date: string]: Transaction[] };
     categories: Category[];
+    onCategoryClick: (
+        e: React.MouseEvent<HTMLDivElement>,
+        transaction: Transaction | null
+    ) => void;
 };
 
 
@@ -11,6 +15,7 @@ type TransactionListProps = {
 const TransactionList: React.FC<TransactionListProps> = ({
     groupedTransactions,
     categories,
+    onCategoryClick
 }) => {
     const sortedTransactions = Object.keys(groupedTransactions)
         .sort((a, b) => new Date(b).getTime() - new Date(a).getTime()) // Спочатку сортуємо дати
@@ -27,9 +32,12 @@ const TransactionList: React.FC<TransactionListProps> = ({
                     </div>
                     {sortedTransactions[date].map((tran) => {
                         // Знаходимо категорію за ID, якщо потрібно
-                        const cat = categories.find((c) => c.id === tran.categoryId);
+                       
                         return (
-                            <div key={tran.id} className="transaction-list">
+                            <div
+                                onClick={(e) => onCategoryClick(e, tran)}
+                                key={tran.id} className="transaction-list">
+
                                 <div className="transaction-line">{tran.name}</div>
                                 <div className="transaction-line price">{tran.finance}</div>
                             </div>
