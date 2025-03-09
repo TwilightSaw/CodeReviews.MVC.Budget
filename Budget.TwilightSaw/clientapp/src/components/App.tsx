@@ -3,6 +3,7 @@ import { Category, Transaction } from "../models/Models";
 import CategoryList from "./CategoryList";
 import TransactionList from "./TransactionList";
 import Popover from "./popovers/Popover";
+import TransactionPopover from "./popovers/TransactionPopover";
 import AddTransaction from "./AddTransaction";
 import Pointer from "./Pointer";
 import { useCategories } from "../hooks/useCategories";
@@ -53,6 +54,30 @@ const App: React.FC = () => {
 
             <div>
                 <TransactionList groupedTransactions={groupedTransactions} categories={categories} onCategoryClick={transactionPopover.openPopover} />
+                {transactionPopover.popoverState.visible && (
+                    <TransactionPopover
+                        color={transactionPopover.popoverState.color}
+                        transaction={transactionPopover.popoverState.data}
+                        categories={categories}
+                        position={transactionPopover.popoverState.position}
+                        visible={transactionPopover.popoverState.visible}
+                        onClose={transactionPopover.closePopover}
+                        onSubmit={async (data) => {
+                            transactionPopover.closePopover();
+                            console.log("Оновлення транзакції:", data);
+                            // Тут має бути API-запит для оновлення транзакції
+                            // await updateTransaction(data);
+                        }}
+                        onDelete={async () => {
+                            if (transactionPopover.popoverState.data) {
+                                console.log("Видалення транзакції:", transactionPopover.popoverState.data.id);
+                                // Тут має бути API-запит для видалення транзакції
+                                // await deleteTransaction(transactionPopover.popoverState.data.id);
+                            }
+                            transactionPopover.closePopover();
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

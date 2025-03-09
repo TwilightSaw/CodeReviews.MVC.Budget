@@ -1,98 +1,106 @@
-﻿import React, { useState } from "react";
-import { Category } from "../../models/Models";
+﻿import React, { useState, useEffect } from "react";
+import { Category, Transaction } from "../../models/Models";
 
 type TransactionPopoverProps = {
     color: string;
-    category: Category | null;
+    transaction: Transaction | null;
+    categories: Category[];
     position: { top: number; left: number };
     visible: boolean;
     onClose: () => void;
-    onSubmit: (data: { fname: string }) => Promise<void>;
+    onSubmit: (data: Transaction) => Promise<void>;
     onDelete: () => Promise<void>;
 };
 
 const TransactionPopover: React.FC<TransactionPopoverProps> = ({
     color,
-    category,
+    transaction,
+    categories,
     position,
     visible,
     onClose,
     onSubmit,
     onDelete,
 }) => {
-    const [fname, setFname] = useState("");
+    const [formData, setFormData] = useState<Transaction>({
+        id: 0,
+        name: "",
+        finance: 0,
+        dateTime: new Date().toISOString(),
+        categoryId: 0,
+    });
+
+    // Заповнюємо дані при відкритті поповера
+    useEffect(() => {
+        if (transaction) {
+            setFormData(transaction);
+        }
+    }, [transaction]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        await onSubmit({ fname });
+        await onSubmit(formData);
     };
 
     return (
         <div
             id="popover"
-            className={`popover ${visible ? 'persona-appear' : 'persona-disappear'}`}
+            className={`popover ${visible ? "persona-appear" : "persona-disappear"}`}
             style={{
                 position: "absolute",
                 top: position.top,
                 left: position.left,
             }}
         >
-            <svg className="persona-dialog" viewBox="0 0 500 200">
-                <defs>
-                    <filter id="outerStroke" filterUnits="userSpaceOnUse">
-                        <feMorphology
-                            in="SourceAlpha"
-                            operator="dilate"
-                            radius="3"
-                            result="dilated"
-                        />
-                        <feComposite
-                            in="dilated"
-                            in2="SourceAlpha"
-                            operator="out"
-                            result="outline"
-                        />
-                        <feFlood floodColor="black" result="floodColor" />
-                        <feComposite
-                            in="floodColor"
-                            in2="outline"
-                            operator="in"
-                            result="coloredOutline"
-                        />
-                        <feMerge>
-                            <feMergeNode in="coloredOutline" />
-                            <feMergeNode in="SourceGraphic" />
-                        </feMerge>
-                    </filter>
-                </defs>
-                <g id="g" transform="scale(0.75) translate(10,50)" filter="url(#outerStroke)">
-                    <polygon points="50,90 460,20 470,200 50,180" fill={color} />
-                    <foreignObject x="90" y="110" width="400" height="100">
-                        <div
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                            }}
-                        >
-                            <form id="popup-form" onSubmit={handleSubmit}>
-                                <input
-                                    type="text"
-                                    id="fname"
-                                    name="fname"
-                                    autoComplete="off"
-                                    placeholder={category ? category.name : "Add category"}
-                                    required
-                                    value={fname}
-                                    onChange={(e) => setFname(e.target.value)}
-                                />
-                            </form>
-                        </div>
+            <svg className="persona-dialog" viewBox="0 0 500 250">
+                <g id="g" transform="scale(0.75) translate(10,50)">
+                    <polygon points="50,90 460,20 470,230 50,210" fill={color} />
+                    <foreignObject x="90" y="90" width="400" height="160">
+                        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                            <input
+                                type="text"
+                                name="name"
+                                autoComplete="off"
+                                placeholder="Transaction name"
+                                required
+                                value={formData.name}
+                                onChange={handleChange}
+                            />
+                            <input
+                                type="number"
+                                name="amount"
+                                autoComplete="off"
+                                placeholder="Amount"
+                                required
+                                value={formData.amount}
+                                onChange={handleChange}
+                            />
+                            <input
+                                type="datetime-local"
+                                name="dateTime"
+                                required
+                                value={new Date(formData.dateTime).toISOString().slice(0, 16)}
+                                onChange={handleChange}
+                            />
+                            <select name="categoryId" required value={formData.categoryId} onChange={handleChange}>
+                                <option value="" disabled>
+                                    Select category
+                                </option>
+                                {categories.map((cat) => (
+                                    <option key={cat.id} value={cat.id}>
+                                        {cat.name}
+                                    </option>
+                                ))}
+                            </select>
+                            <button type="submit">Save</button>
+                        </form>
                     </foreignObject>
 
-                    {category?.name && (
+                    {transaction && (
                         <>
                             <polygon points="417,57 463,52 466,98 422,103" fill="black" />
                             <polygon
