@@ -30,7 +30,6 @@ const TransactionPopover: React.FC<TransactionPopoverProps> = ({
         categoryId: 0,
     });
 
-    // Заповнюємо дані при відкритті поповера
     useEffect(() => {
         if (transaction) {
             setFormData(transaction);
@@ -56,80 +55,83 @@ const TransactionPopover: React.FC<TransactionPopoverProps> = ({
                 left: position.left,
             }}
         >
-            <svg className="persona-dialog" viewBox="0 0 500 250">
-                <g id="g" transform="scale(0.75) translate(10,50)">
-                    <polygon points="50,90 460,20 470,230 50,210" fill={color} />
-                    <foreignObject x="90" y="90" width="400" height="160">
-                        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                            <input
-                                type="text"
-                                name="name"
-                                autoComplete="off"
-                                placeholder="Transaction name"
-                                required
-                                value={formData.name}
-                                onChange={handleChange}
-                            />
-                            <input
-                                type="number"
-                                name="amount"
-                                autoComplete="off"
-                                placeholder="Amount"
-                                required
-                                value={formData.amount}
-                                onChange={handleChange}
-                            />
-                            <input
-                                type="datetime-local"
-                                name="dateTime"
-                                required
-                                value={new Date(formData.dateTime).toISOString().slice(0, 16)}
-                                onChange={handleChange}
-                            />
-                            <select name="categoryId" required value={formData.categoryId} onChange={handleChange}>
-                                <option value="" disabled>
-                                    Select category
-                                </option>
-                                {categories.map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
-                                        {cat.name}
-                                    </option>
-                                ))}
-                            </select>
-                            <button type="submit">Save</button>
-                        </form>
-                    </foreignObject>
-
-                    {transaction && (
-                        <>
-                            <polygon points="417,57 463,52 466,98 422,103" fill="black" />
-                            <polygon
-                                points="420,60 520,50 520,90 425,100"
-                                fill="#e76c6f"
-                                style={{ cursor: "pointer" }}
-                                onClick={async (e) => {
-                                    e.stopPropagation();
-                                    await onDelete();
-                                }}
-                            />
-                            <text
-                                x="470"
-                                y="78"
-                                textAnchor="middle"
-                                dominantBaseline="middle"
-                                fill="black"
-                                fontSize="20"
-                                fontWeight="bold"
-                                pointerEvents="none"
-                            >
-                                Delete
-                            </text>
-                        </>
-                    )}
-                    <polygon points="-10,150 60,200 120,150 0,130" fill={color} />
-                    <polygon points="-20,125 -25,170 -3,170 15,134" fill={color} />
-                    <polygon points="-50,160 -7,180 2,160" fill={color} />
+            <svg id="g" width="640" height="480" xmlns="http://www.w3.org/2000/svg">
+                <g className="layer">
+                    <title>Layer 1</title>
+                    <path
+                        d="m331.6,13.4c-20,77 -21,78 -21.6,77.6c-0.6,-0.4 96.6,9.4 96,9c-0.6,-0.4 -69.4,35.4 -70,35c-0.6,-0.4 -289.4,-57.6 -290,-58c-0.6,-0.4 23.6,379.4 23,379c-0.6,-0.4 540.6,-36.6 540.6,-37.6c0,-1 -31,-318 -31.6,-318.4c-0.6,-0.4 -58.4,11.4 -59,11c-0.6,-0.4 -3.4,-39.6 -4,-40c-0.6,-0.4 -172.4,-0.6 -173,-1c-0.6,-0.4 -10.4,-56.6 -10.4,-56.6z"
+                        fill="none"
+                        stroke="#000000"
+                        strokeWidth="5"
+                    />
                 </g>
+                <foreignObject x="90" y="180" width="400" height="160">
+                    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                        <input
+                            type="text"
+                            name="name"
+                            autoComplete="off"
+                            placeholder="Transaction name"
+                            required
+                            value={formData.name}
+                            onChange={handleChange}
+                        />
+                        <input
+                            type="number"
+                            name="finance"
+                            autoComplete="off"
+                            placeholder="Amount"
+                            required
+                            value={formData.amount}
+                            onChange={handleChange}
+                        />
+                        <input
+                            type="datetime-local"
+                            name="dateTime"
+                            required
+                            value={new Date(formData.dateTime).toISOString().slice(0, 16)}
+                            onChange={handleChange}
+                        />
+                        <select name="categoryId" required value={formData.categoryId} onChange={handleChange}>
+                            <option value="" disabled>
+                                Select category
+                            </option>
+                            {categories.map((cat) => (
+                                <option key={cat.id} value={cat.id}>
+                                    {cat.name}
+                                </option>
+                            ))}
+                        </select>
+                        <button type="submit">Save</button>
+                    </form>
+                </foreignObject>
+                {transaction && (
+                    <>
+                        <polygon points="527,127 633,117 633,163 532,173" fill="black" />
+                        <polygon
+                            points="530,130 630,120 630,160 535,170"
+                            fill="#e76c6f"
+                            style={{ cursor: "pointer" }}
+                            onClick={async (e) => {
+                                e.stopPropagation();
+                                await onDelete();
+                            }}
+                        />
+                        <text
+                            x="580"
+                            y="150"
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                            fill="black"
+                            fontSize="20"
+                            fontWeight="bold"
+                            pointerEvents="none"
+                        >
+                            Delete
+                        </text>
+                    </>
+                )}
+              
             </svg>
         </div>
     );

@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from "react";
 
-export function usePopover<T>() {
+export function useTransactionPopover<T>() {
     const [popoverState, setPopoverState] = useState<{
         visible: boolean;
         color: string;

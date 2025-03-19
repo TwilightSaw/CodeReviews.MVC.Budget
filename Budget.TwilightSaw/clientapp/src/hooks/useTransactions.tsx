@@ -31,6 +31,29 @@ export function useTransactions() {
         }
     }
 
+
+    async function updateTransaction(transaction: Transaction) {
+        try {
+            await fetch(`${API_URL}/${transaction.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ Name: transaction.name, DateTime: transaction.dateTime, Finance: transaction.finance, CategoryId: transaction.categoryId }),
+            });
+            fetchTransactions();
+        } catch (error) {
+            console.error("Error updating category:", error);
+        }
+    }
+
+    async function deleteTransaction(id: number) {
+        try {
+            await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+            fetchTransactions();
+        } catch (error) {
+            console.error("Error deleting category:", error);
+        }
+    }
+
     function groupTransactionsByDate(transactions: Transaction[]) {
         const grouped: { [date: string]: Transaction[] } = {};
         transactions.forEach((tran) => {
@@ -49,5 +72,5 @@ export function useTransactions() {
         fetchTransactions();
     }, []);
 
-    return { transactions, groupedTransactions, fetchTransactions, addTransaction };
+    return { transactions, groupedTransactions, fetchTransactions, addTransaction, updateTransaction, deleteTransaction };
 }

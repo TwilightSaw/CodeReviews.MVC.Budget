@@ -6,6 +6,7 @@ type PopoverProps = {
     category: Category | null;
     position: { top: number; left: number };
     visible: boolean;
+    isAnimating: boolean;
     onClose: () => void;
     onSubmit: (data: { fname: string }) => Promise<void>;
     onDelete: () => Promise<void>;
@@ -16,6 +17,7 @@ const Popover: React.FC<PopoverProps> = ({
     category,
     position,
     visible,
+    isAnimating,
     onClose,
     onSubmit,
     onDelete,
@@ -30,7 +32,7 @@ const Popover: React.FC<PopoverProps> = ({
     return (
         <div
             id="popover"
-            className={`popover ${visible ? 'persona-appear' : 'persona-disappear'}`}
+            className={`popover ${visible ? 'persona-appear' : isAnimating ? 'persona-disappear' : ""}`}
             style={{
                 position: "absolute",
                 top: position.top,

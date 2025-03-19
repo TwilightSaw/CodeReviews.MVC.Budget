@@ -9,12 +9,13 @@ import Pointer from "./Pointer";
 import { useCategories } from "../hooks/useCategories";
 import { useTransactions } from "../hooks/useTransactions";
 import { usePopover } from "../hooks/usePopover";
+import { useTransactionPopover } from "../hooks/useTransactionPopover";
 
 const App: React.FC = () => {
     const { categories, addCategory, updateCategory, deleteCategory } = useCategories();
-    const { transactions, groupedTransactions, addTransaction } = useTransactions();
+    const { transactions, groupedTransactions, addTransaction, updateTransaction, deleteTransaction } = useTransactions();
     const categoryPopover = usePopover<Category>();
-    const transactionPopover = usePopover<Transaction>();
+    const transactionPopover = useTransactionPopover<Transaction>();
 
     return (
         <div className="main">
@@ -22,12 +23,13 @@ const App: React.FC = () => {
                 <CategoryList categories={categories} onCategoryClick={categoryPopover.openPopover} />
                 <Pointer text={"Transaction types"} png={"pointer.PNG"} />
 
-                {categoryPopover.popoverState.visible && (
+                {categoryPopover.popoverState.visible || categoryPopover.isAnimating ? (
                     <Popover
                         color={categoryPopover.popoverState.color}
                         category={categoryPopover.popoverState.data}
                         position={categoryPopover.popoverState.position}
                         visible={categoryPopover.popoverState.visible}
+                        isAnimating={categoryPopover.isAnimating}  
                         onClose={categoryPopover.closePopover}
                         onSubmit={async (data) => {
                             categoryPopover.closePopover(); // Закриваємо перед викликом API
@@ -37,15 +39,14 @@ const App: React.FC = () => {
                             } else {
                                 await addCategory(data.fname);
                             }
-                        }}
+                        } }
 
 
                         onDelete={async () => {
                             categoryPopover.popoverState.data && deleteCategory(categoryPopover.popoverState.data.id);
                             categoryPopover.closePopover();
-                        }}
-                    />
-                )}
+                        } }                   />
+                ): null}
             </div>
 
             <div>
@@ -65,14 +66,12 @@ const App: React.FC = () => {
                         onSubmit={async (data) => {
                             transactionPopover.closePopover();
                             console.log("Оновлення транзакції:", data);
-                            // Тут має бути API-запит для оновлення транзакції
-                            // await updateTransaction(data);
+                            await updateTransaction(data);
                         }}
                         onDelete={async () => {
                             if (transactionPopover.popoverState.data) {
                                 console.log("Видалення транзакції:", transactionPopover.popoverState.data.id);
-                                // Тут має бути API-запит для видалення транзакції
-                                // await deleteTransaction(transactionPopover.popoverState.data.id);
+                                await deleteTransaction(transactionPopover.popoverState.data.id!);
                             }
                             transactionPopover.closePopover();
                         }}
