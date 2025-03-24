@@ -24,8 +24,8 @@ export function useTransactionPopover<T>() {
             color: backgroundColor,
             data,
             position: {
-                top: button.offsetTop + button.offsetHeight - 130, // Трохи нижче кнопки
-                left: button.offsetLeft + 20, // Трохи правіше кнопки
+                top: button.offsetTop + button.offsetHeight * 14, // Трохи нижче кнопки
+                left: button.offsetLeft * 4, // Трохи правіше кнопки
             },
         });
         setIsAnimating(false);

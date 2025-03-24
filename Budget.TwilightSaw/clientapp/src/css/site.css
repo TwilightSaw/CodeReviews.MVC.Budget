@@ -74,6 +74,9 @@ body {
 }
 
 .block {
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
     border-radius: 50%;
     display: flex;
     width: 50px;

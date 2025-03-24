@@ -53,6 +53,7 @@ const TransactionPopover: React.FC<TransactionPopoverProps> = ({
                 position: "absolute",
                 top: position.top,
                 left: position.left,
+                zoom: 0.5,
             }}
         >
             <svg id="g" width="640" height="480" xmlns="http://www.w3.org/2000/svg">
@@ -60,15 +61,20 @@ const TransactionPopover: React.FC<TransactionPopoverProps> = ({
                     <title>Layer 1</title>
                     <path
                         d="m331.6,13.4c-20,77 -21,78 -21.6,77.6c-0.6,-0.4 96.6,9.4 96,9c-0.6,-0.4 -69.4,35.4 -70,35c-0.6,-0.4 -289.4,-57.6 -290,-58c-0.6,-0.4 23.6,379.4 23,379c-0.6,-0.4 540.6,-36.6 540.6,-37.6c0,-1 -31,-318 -31.6,-318.4c-0.6,-0.4 -58.4,11.4 -59,11c-0.6,-0.4 -3.4,-39.6 -4,-40c-0.6,-0.4 -172.4,-0.6 -173,-1c-0.6,-0.4 -10.4,-56.6 -10.4,-56.6z"
-                        fill="none"
+                        fill="#ededed"
                         stroke="#000000"
                         strokeWidth="5"
                     />
                 </g>
-                <foreignObject x="90" y="180" width="400" height="160">
-                    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                <foreignObject x="90" y="150" width="450" height="300">
+                    <form
+                        id="popup-2-form"
+                        onSubmit={handleSubmit}
+                        style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+                    >
                         <input
                             type="text"
+                            id="ftext"
                             name="name"
                             autoComplete="off"
                             placeholder="Transaction name"
@@ -78,6 +84,7 @@ const TransactionPopover: React.FC<TransactionPopoverProps> = ({
                         />
                         <input
                             type="number"
+                            id="fvalue"
                             name="finance"
                             autoComplete="off"
                             placeholder="Amount"
@@ -87,12 +94,19 @@ const TransactionPopover: React.FC<TransactionPopoverProps> = ({
                         />
                         <input
                             type="datetime-local"
+                            id="fdate"
                             name="dateTime"
                             required
                             value={new Date(formData.dateTime).toISOString().slice(0, 16)}
                             onChange={handleChange}
                         />
-                        <select name="categoryId" required value={formData.categoryId} onChange={handleChange}>
+                        <select
+                            id="fcategory"
+                            name="categoryId"
+                            required
+                            value={formData.categoryId}
+                            onChange={handleChange}
+                        >
                             <option value="" disabled>
                                 Select category
                             </option>
@@ -102,9 +116,40 @@ const TransactionPopover: React.FC<TransactionPopoverProps> = ({
                                 </option>
                             ))}
                         </select>
-                        <button type="submit">Save</button>
                     </form>
                 </foreignObject>
+
+                {/* 👇 SVG-кнопка "Save", що працює як submit */}
+                <>
+                    <polygon points="527,187 633,177 633,223 532,233" fill="black" />
+                    <polygon
+                        points="530,190 630,180 630,220 535,230"
+                        fill="#67e76f"
+                        style={{ cursor: "pointer" }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            const form = document.getElementById("popup-2-form");
+                            if (form) {
+                                form.dispatchEvent(
+                                    new Event("submit", { cancelable: true, bubbles: true })
+                                );
+                            }
+                        }}
+                    />
+                    <text
+                        x="580"
+                        y="210"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        fill="black"
+                        fontSize="20"
+                        fontWeight="bold"
+                        pointerEvents="none"
+                    >
+                        Save
+                    </text>
+                </>
+               
                 {transaction && (
                     <>
                         <polygon points="527,127 633,117 633,163 532,173" fill="black" />

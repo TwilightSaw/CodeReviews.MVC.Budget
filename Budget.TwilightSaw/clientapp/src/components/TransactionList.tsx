@@ -31,13 +31,14 @@ const TransactionList: React.FC<TransactionListProps> = ({
                         {date}
                     </div>
                     {sortedTransactions[date].map((tran) => {
-                        // Знаходимо категорію за ID, якщо потрібно
+                        const category = categories.find(c => c.id === tran.categoryId)
                        
                         return (
                             <div
                                 onClick={(e) => onCategoryClick(e, tran)}
                                 key={tran.id} className="transaction-list">
 
+                                <div className="transaction-line category">{category?.name || "Unknown"}</div>
                                 <div className="transaction-line">{tran.name}</div>
                                 <div className="transaction-line price">{tran.finance}</div>
                             </div>

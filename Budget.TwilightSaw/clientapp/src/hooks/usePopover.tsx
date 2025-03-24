@@ -25,7 +25,7 @@ export function usePopover<T>() {
             data,
             position: {
                 top: button.offsetTop + button.offsetHeight - 130, // Трохи нижче кнопки
-                left: button.offsetLeft + 20, // Трохи правіше кнопки
+                left: button.offsetLeft + 10, // Трохи правіше кнопки
             },
         });
         setIsAnimating(false);
