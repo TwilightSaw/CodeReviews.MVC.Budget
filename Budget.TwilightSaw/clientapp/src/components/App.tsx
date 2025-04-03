@@ -60,6 +60,7 @@ const App: React.FC = () => {
                         color={transactionPopover.popoverState.color}
                         transaction={transactionPopover.popoverState.data}
                         categories={categories}
+                        isAnimating={transactionPopover.isAnimating}  
                         position={transactionPopover.popoverState.position}
                         visible={transactionPopover.popoverState.visible}
                         onClose={transactionPopover.closePopover}

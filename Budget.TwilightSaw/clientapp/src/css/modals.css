@@ -5,6 +5,9 @@
     font-family: 'Poiret One', sans-serif;
     z-index: 1000;
     transform-origin: top left;
+    width: 0;
+    height: 0;
+    overflow: visible;
 }
 
 @keyframes personaAppear {
@@ -79,10 +82,8 @@
     display: flex;
     align-items: center;
     padding-left: 70px;
-    padding-bottom: 60px;
-    height: 120px;
-
-   
+    padding-bottom: 40px;
+    height: 100%;
 }
 
 #fname {
@@ -126,7 +127,8 @@
 }
 
 #popup-2-form {
-    padding-left: 10px;
+    padding-left: 12px;
+    padding-top: 15px;
 }
 
 #ftext {
@@ -138,7 +140,7 @@
     height: 100%;
     border-bottom: black solid;
     background-color: transparent;
-    transform: rotate(2deg);
+    transform: rotate(-5deg);
 }
 
 #ftext:focus {
@@ -164,8 +166,8 @@
 #fdate {
     font-family: 'Poiret One', sans-serif;
     border: none;
-    padding-top: 15px;
-    transform: rotate(3deg);
+   
+    transform: rotate(-1deg);
     font-size: 29px;
     font-weight: bolder;
     height: 100%;

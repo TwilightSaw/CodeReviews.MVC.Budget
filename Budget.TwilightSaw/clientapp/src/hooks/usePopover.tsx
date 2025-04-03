@@ -38,7 +38,7 @@ export function usePopover<T>() {
             setIsAnimating(false);
             setPopoverState((prev) => ({ ...prev, visible: false })); // Видаляємо з DOM після анімації
             // Скидаємо стан анімації
-        }, 300); // 300 мс - це тривалість анімації в CSS
+        }, 300); 
 
         console.log("Закриваємо поповер...");
     }

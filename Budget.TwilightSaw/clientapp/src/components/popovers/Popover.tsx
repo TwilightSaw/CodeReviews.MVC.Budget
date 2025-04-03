@@ -32,7 +32,7 @@ const Popover: React.FC<PopoverProps> = ({
     return (
         <div
             id="popover"
-            className={`popover ${visible ? 'persona-appear' : isAnimating ? 'persona-disappear' : ""}`}
+            className={`popover ${isAnimating ? 'persona-disappear' : visible ? 'persona-appear' : ""}`}
             style={{
                 position: "absolute",
                 top: position.top,

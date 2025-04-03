@@ -39,16 +39,16 @@ const CategoryList: React.FC<CategoryListProps> = ({ categories, onCategoryClick
     return (
         <div className="categories">
             {categories.map((cat) => (
-                <div key={cat.id}>
-                    <button
-                        id="block"
+                
+                    <button key={cat.id}
+                        id={`block-${cat.id}`}
                         className="block"
                         style={{ backgroundColor: colors[cat.id] || "gray" }} // Якщо кольору ще немає, буде "gray"
                         onClick={(e) => onCategoryClick(e, cat)}
                     >
-                        {cat.name || "Without name"}
+                        {cat.name.slice(0,3) || "Without name"}
                     </button>
-                </div>
+                
             ))}
 
             <button className="block-add" onClick={(e) => onCategoryClick(e, null)}>

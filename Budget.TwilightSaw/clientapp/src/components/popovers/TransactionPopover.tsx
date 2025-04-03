@@ -7,6 +7,7 @@ type TransactionPopoverProps = {
     categories: Category[];
     position: { top: number; left: number };
     visible: boolean;
+    isAnimating: boolean;
     onClose: () => void;
     onSubmit: (data: Transaction) => Promise<void>;
     onDelete: () => Promise<void>;
@@ -17,6 +18,7 @@ const TransactionPopover: React.FC<TransactionPopoverProps> = ({
     transaction,
     categories,
     position,
+    isAnimating,
     visible,
     onClose,
     onSubmit,
@@ -48,14 +50,19 @@ const TransactionPopover: React.FC<TransactionPopoverProps> = ({
     return (
         <div
             id="popover"
-            className={`popover ${visible ? "persona-appear" : "persona-disappear"}`}
+            className={`popover ${isAnimating ? 'persona-disappear' : visible ? 'persona-appear' : ""}`}
             style={{
                 position: "absolute",
                 top: position.top,
                 left: position.left,
-                zoom: 0.5,
             }}
         >
+            <div
+                style={{
+                    transform: "scale(0.55)",
+                                    
+                }}
+            >
             <svg id="g" width="640" height="480" xmlns="http://www.w3.org/2000/svg">
                 <g className="layer">
                     <title>Layer 1</title>
@@ -177,7 +184,8 @@ const TransactionPopover: React.FC<TransactionPopoverProps> = ({
                     </>
                 )}
               
-            </svg>
+                </svg>
+            </div>
         </div>
     );
 };
